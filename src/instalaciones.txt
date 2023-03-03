@@ -1,0 +1,7 @@
+npm install @mui/material @emotion/react @emotion/styled
+npm install @fontsource/roboto
+npm i react-big-calendar
+npm install date-fns
+npm i react-modal
+npm install react-datepicker --save
+npm install sweetalert2
