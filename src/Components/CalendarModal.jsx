@@ -1,7 +1,15 @@
 import Modal from 'react-modal';
 import React, { useState } from 'react'
 import "./calendarModal.css"
-import { addHours } from 'date-fns';
+import { addHours, differenceInSeconds } from 'date-fns';
+import ReactDatePicker, { registerLocale } from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import es from 'date-fns/locale/es';
+import Swal from 'sweetalert2';
+import useUiStore from '../hooks/useUiStore';
+
+
+registerLocale('es', es)
 
 const customStyles = {
     content: {
@@ -19,11 +27,11 @@ Modal.setAppElement('#root');
 
 
 const CalendarModal = () => {
-    const [modalIsOpen, setIsOpen] = useState(true);
+    const { isDateModalOpen, openDateModal, closeDateModal } = useUiStore()
     const [formValues, setFormValues] = useState({
         start: new Date(),
         end: addHours(new Date(), 2),
-        nombreCliente: "Guido",
+        nombreCliente: "",
         descripcion: "Corte de pelo"
     })
 
@@ -31,12 +39,38 @@ const CalendarModal = () => {
         setFormValues({ ...formValues, [target.name]: target.value })
     }
 
+    const onDateChanged = (event, changing) => {
+        setFormValues({ ...formValues, [changing]: event })
+    }
 
     const closeModal = () => {
-        setIsOpen(false)
+        closeDateModal()
+        console.log("cerrando");
     }
+
+    const onSubmit = (event) => {
+        event.preventDefault();
+
+        // diferencia en segundos entre la fecha fin y la de inicio
+        const difference = differenceInSeconds(formValues.end, formValues.start);
+
+        // si difference no es un numero o es menos a 0
+        if (isNaN(difference) || difference <= 0) {
+            Swal.fire("Fechas incorrectas", "Revisar las fechas ingresadas", "error");
+            return;
+        }
+
+        if (formValues.nombreCliente.length <= 0)
+         Swal.fire("Nombre de cliente obligatorio", "", "error");
+         return;
+       
+
+
+
+    }
+
     return (
-        <Modal isOpen={modalIsOpen}
+        <Modal isOpen={isDateModalOpen}
             onRequestClose={closeModal}
             style={customStyles}
             className="modal"
@@ -44,16 +78,17 @@ const CalendarModal = () => {
             closeTimeoutMS={200}>
             <h1> Nuevo Turno </h1>
             <hr />
-            <form className="container">
+            <form className="container" onSubmit={onSubmit}>
 
                 <div className="form-group mb-2">
                     <label>Fecha y hora inicio</label>
-                    <input className="form-control" placeholder="Fecha inicio" />
+                    <ReactDatePicker locale="es" selected={formValues.start} onChange={(event) => onDateChanged(event, "start")} className="form-control" dateFormat="Pp" showTimeSelect />
                 </div>
 
                 <div className="form-group mb-2">
                     <label>Fecha y hora fin</label>
-                    <input className="form-control" placeholder="Fecha inicio" />
+                    <ReactDatePicker locale="es" selected={formValues.end} onChange={(event) => onDateChanged(event, "end")} className="form-control" dateFormat="Pp" minDate={formValues.start
+                    } showTimeSelect />
                 </div>
 
                 <hr />

@@ -2,6 +2,7 @@ import { Grid } from '@mui/material'
 import React from 'react'
 
 const NavBar = () => {
+
     return (
         <Grid>
             <nav className="navbar bg-dark bg-body-tertiary " data-bs-theme="dark">

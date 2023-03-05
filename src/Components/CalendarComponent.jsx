@@ -5,6 +5,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { espMesages } from '../helpers/espMesages';
 import { useState } from 'react';
 import "../App.css"
+import useUiStore from '../hooks/useUiStore';
+import useCalendarStore from '../hooks/useCalendarStore';
 
 
 const locales = {
@@ -19,12 +21,10 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
-const myEventsList = [{end: new Date('2023-03-04T03:30:00.000Z'),
-start: new Date('2023-03-04T03:00:00.000Z'),
-title: 'start of the week',
-name: "guido"}]
 
 const CalendarComponent = (props) => {
+    const {events} = useCalendarStore()
+    const { openDateModal } = useUiStore()
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
 
     const eventStyleGetter = (event, start, end, isSelected) => {
@@ -45,18 +45,28 @@ const CalendarComponent = (props) => {
         localStorage.setItem("lastView", event)
         setLastView(event)
     }
+
+    const onDoubleClick = () => {
+        openDateModal()
+      }
+
+    const onSelect = (event) => {
+        console.log({click: event});
+    }
     return (
         <div>
             <Calendar
                 culture="es"
                 defaultView={lastView}
                 localizer={localizer}
-                events={myEventsList}
+                events={events}
                 onView={onViewChanged}
                 eventPropGetter={eventStyleGetter}
                 startAccessor="start"
                 endAccessor="end"
                 messages={espMesages()}
+                onDoubleClickEvent={onDoubleClick}
+                onSelectEvent={onSelect}
                 style={{ marginTop: 20, marginBottom: 30, height: "calc( 100vh - 80px)" }}
             />
         </div>

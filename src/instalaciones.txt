@@ -5,3 +5,5 @@ npm install date-fns
 npm i react-modal
 npm install react-datepicker --save
 npm install sweetalert2
+npm install @reduxjs/toolkit
+npm install react-redux
