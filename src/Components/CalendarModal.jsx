@@ -1,5 +1,5 @@
 import Modal from 'react-modal';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "./calendarModal.css"
 import { addHours, differenceInSeconds } from 'date-fns';
 import ReactDatePicker, { registerLocale } from 'react-datepicker';
@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
 import Swal from 'sweetalert2';
 import useUiStore from '../hooks/useUiStore';
+import useCalendarStore from '../hooks/useCalendarStore';
 
 
 registerLocale('es', es)
@@ -27,13 +28,22 @@ Modal.setAppElement('#root');
 
 
 const CalendarModal = () => {
-    const { isDateModalOpen, openDateModal, closeDateModal } = useUiStore()
+
+    const { activeEvent, startSavingEvent } = useCalendarStore()
+    const { isDateModalOpen, closeDateModal } = useUiStore()
     const [formValues, setFormValues] = useState({
         start: new Date(),
         end: addHours(new Date(), 2),
-        nombreCliente: "",
-        descripcion: "Corte de pelo"
+        title: "guido",
+        notes: "Corte de pelo"
     })
+
+    useEffect(() => {
+        if (activeEvent !== null) {
+            setFormValues({ ...activeEvent })
+        }
+    }, [activeEvent])
+
 
     const onInputChanged = ({ target }) => {
         setFormValues({ ...formValues, [target.name]: target.value })
@@ -48,7 +58,7 @@ const CalendarModal = () => {
         console.log("cerrando");
     }
 
-    const onSubmit = (event) => {
+    const onSubmit = async (event) => {
         event.preventDefault();
 
         // diferencia en segundos entre la fecha fin y la de inicio
@@ -60,12 +70,14 @@ const CalendarModal = () => {
             return;
         }
 
-        if (formValues.nombreCliente.length <= 0)
-         Swal.fire("Nombre de cliente obligatorio", "", "error");
-         return;
-       
+        if (formValues.title.length <= 0) {
+            Swal.fire("Nombre de cliente obligatorio", "", "error");
+            return;
+        }
 
 
+        await startSavingEvent(formValues)
+        closeDateModal();
 
     }
 
@@ -98,9 +110,9 @@ const CalendarModal = () => {
                         type="text"
                         className="form-control"
                         placeholder="Nombre"
-                        name="nombreCliente"
+                        name="title"
                         autoComplete="off"
-                        value={formValues.nombreCliente}
+                        value={formValues.title}
                         onChange={onInputChanged}
                     />
                     <small id="emailHelp" className="form-text text-muted">Una descripción corta</small>
@@ -112,8 +124,8 @@ const CalendarModal = () => {
                         className="form-control"
                         placeholder="Descripcion"
                         rows="5"
-                        name="descripcion"
-                        value={formValues.descripcion}
+                        name="notes"
+                        value={formValues.notes}
                         onChange={onInputChanged}
                     ></textarea>
                     <small id="emailHelp" className="form-text text-muted">Información adicional</small>

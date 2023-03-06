@@ -22,8 +22,8 @@ const localizer = dateFnsLocalizer({
 });
 
 
-const CalendarComponent = (props) => {
-    const {events} = useCalendarStore()
+const CalendarComponent = () => {
+    const {events, setActiveEvent} = useCalendarStore()
     const { openDateModal } = useUiStore()
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
 
@@ -51,7 +51,7 @@ const CalendarComponent = (props) => {
       }
 
     const onSelect = (event) => {
-        console.log({click: event});
+       setActiveEvent(event)
     }
     return (
         <div>

@@ -1,26 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { addHours } from "date-fns";
 
 const tempEvent = {
-    end: new Date('2023-03-04T03:30:00.000Z'),
-    start: new Date('2023-03-04T03:00:00.000Z'),
-    title: 'start of the week',
-    name: "guido",
-    _id: new Date().getTime()
-}
-
+  start: new Date(),
+  end: addHours(new Date(), 3),
+  title: "start of the week",
+  name: "guido",
+  notes: "holaaaa",
+  _id: new Date().getTime(),
+  user: {
+    _id: "123",
+    name: "Fernando",
+  },
+};
 
 export const calendarSlice = createSlice({
   name: "calendar",
   initialState: {
-   events: [tempEvent],
-   activeEvent: null
+    events: [tempEvent],
+    activeEvent: null,
   },
   reducers: {
-    onSetActiveEvent: (state, {payload}) => {
-        state.activeEvent = true
+    onSetActiveEvent: (state, { payload }) => {
+      state.activeEvent = payload;
+    },
+    onAddEvent: (state, { payload }) => {
+      state.events.push(payload);
+      state.activeEvent = null;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { increment } = calendarSlice.actions;
+export const { onSetActiveEvent, onAddEvent } = calendarSlice.actions;
