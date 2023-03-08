@@ -3,10 +3,11 @@ import { format, parse, startOfWeek, getDay } from "date-fns";
 import esES from "date-fns/locale/es";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { espMesages } from '../helpers/espMesages';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import "../App.css"
 import useUiStore from '../hooks/useUiStore';
 import useCalendarStore from '../hooks/useCalendarStore';
+import { Grid } from '@mui/material';
 
 
 const locales = {
@@ -23,7 +24,7 @@ const localizer = dateFnsLocalizer({
 
 
 const CalendarComponent = () => {
-    const {events, setActiveEvent} = useCalendarStore()
+    const {events, setActiveEvent, startLoadingEvents} = useCalendarStore()
     const { openDateModal } = useUiStore()
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
 
@@ -53,8 +54,14 @@ const CalendarComponent = () => {
     const onSelect = (event) => {
        setActiveEvent(event)
     }
+
+    useEffect(() => {
+        startLoadingEvents()
+    }, [])
+
+    console.log("estos son los eventos main", events);
     return (
-        <div>
+        <Grid sx={{display: 'flex', justifyContent: 'center'}}>
             <Calendar
                 culture="es"
                 defaultView={lastView}
@@ -67,9 +74,9 @@ const CalendarComponent = () => {
                 messages={espMesages()}
                 onDoubleClickEvent={onDoubleClick}
                 onSelectEvent={onSelect}
-                style={{ marginTop: 20, marginBottom: 30, height: "calc( 100vh - 80px)" }}
+                style={{ marginTop: 20, marginBottom: 30, height: "calc( 100vh - 80px)", width: "95vw"}}
             />
-        </div>
+        </Grid>
     )
 }
 

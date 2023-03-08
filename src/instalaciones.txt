@@ -7,3 +7,4 @@ npm install react-datepicker --save
 npm install sweetalert2
 npm install @reduxjs/toolkit
 npm install react-redux
+npm install firebase

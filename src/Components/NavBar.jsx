@@ -5,7 +5,7 @@ import useCalendarStore from '../hooks/useCalendarStore'
 import useUiStore from '../hooks/useUiStore'
 
 const NavBar = () => {
-    const {setActiveEvent} =useCalendarStore()
+    const {setActiveEvent, deleteEvent, activeEvent} =useCalendarStore()
     const {openDateModal} = useUiStore()
 
     const handleClickNew = () => {
@@ -14,11 +14,6 @@ const NavBar = () => {
           notes: "",
           start: new Date(),
           end: addHours(new Date(), 2),
-          bgColor: "#fafafa",
-          user: {
-            id: "123",
-            name: "Fernando",
-          },
         });
         openDateModal();
       };
@@ -30,7 +25,10 @@ const NavBar = () => {
                     <span className="navbar-text">
                         Calendario para turnos
                     </span>
-                    <button className='btn btn-primary' onClick={handleClickNew}>Agregar Turno</button>
+                    <div>
+                      <button className='btn btn-primary' onClick={handleClickNew}>Agregar turno</button>
+                      {activeEvent ? (<button className='btn btn-danger m-2' onClick={deleteEvent}>Borrar turno</button>  ) : null}
+                    </div>
                 </div>
             </nav>
         </Grid>
