@@ -5,6 +5,8 @@ import {
   onLoadEvents,
   onSetActiveEvent,
   onUpdateEvent,
+  setEvent,
+  setStart,
 } from "../store/calendar/calendarSlice";
 import { db } from "../firebase/config";
 import {
@@ -14,7 +16,9 @@ import {
   onSnapshot,
   getDocs,
 } from "firebase/firestore";
-import { eventsToDateEvents } from "../helpers/eventsToDateEvents";
+import {eventsToDateEvents} from "../helpers/eventsToDateEvents"
+import { toDate } from "date-fns";
+import { async } from "@firebase/util";
 
 const useCalendarStore = () => {
   const dispatch = useDispatch();
@@ -28,22 +32,29 @@ const useCalendarStore = () => {
     const querySnapshot = await getDocs(collection(db, "tobias"));
     const events = [];
     querySnapshot.forEach((doc) => {
-      events.push(doc.data());
+      events.push({id: doc.id, ...doc.data()});
     });
-    const fechaEventos = eventsToDateEvents(events.calendarEvent);
-    dispatch(onLoadEvents(fechaEventos));
-    console.log(events);
+    // const fechas = async() => {
+    //   const  mapeoSegundos = await events.map((arr) => arr.start.seconds)
+    //   const mapeoNanosegundos = await events.map((arr) => arr.start.nanoseconds)
+    //   const segundos = mapeoSegundos.map((segundo) => segundo * 1000)
+    //   const nanosegundos = mapeoNanosegundos.map((nanosegundo) => nanosegundo / 1000)
+    //   const timestampEnMilisegundos = segundos.reduce((acc, val) => acc + val, 0) + nanosegundos.reduce((acc, val) => acc + val, 0);
+    //   const fecha = new Date(timestampEnMilisegundos)
+    //   dispatch(setStart(fecha))
+    // }
+    // fechas();
+    dispatch(setEvent(events))
   };
+
   const startSavingEvent = async (calendarEvent) => {
-    // llegar al backend
     if (calendarEvent._id) {
       dispatch(onUpdateEvent({ ...calendarEvent }));
     } else {
       const docRef = await addDoc(collection(db, "tobias"), {
-        calendarEvent,
+        ...calendarEvent,
         _id: new Date().getTime(),
       });
-      console.log("Document written with ID: ", docRef.id);
       dispatch(onAddEvent({ ...calendarEvent, _id: new Date().getTime() }));
     }
   };

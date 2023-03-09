@@ -1,5 +1,5 @@
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
-import { format, parse, startOfWeek, getDay } from "date-fns";
+import { format, parse, startOfWeek, getDay, toDate } from "date-fns";
 import esES from "date-fns/locale/es";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { espMesages } from '../helpers/espMesages';
@@ -24,7 +24,7 @@ const localizer = dateFnsLocalizer({
 
 
 const CalendarComponent = () => {
-    const {events, setActiveEvent, startLoadingEvents} = useCalendarStore()
+    const { events, setActiveEvent, startLoadingEvents } = useCalendarStore()
     const { openDateModal } = useUiStore()
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
 
@@ -49,19 +49,29 @@ const CalendarComponent = () => {
 
     const onDoubleClick = () => {
         openDateModal()
-      }
+    }
 
     const onSelect = (event) => {
-       setActiveEvent(event)
+        setActiveEvent(event)
     }
 
     useEffect(() => {
         startLoadingEvents()
     }, [])
 
-    console.log("estos son los eventos main", events);
+    // const fechas = () => {
+    //     const mapeoSegundos = events.map((arr) => arr.start.seconds)
+    //     const mapeoNanosegundos = events.map((arr) => arr.start.nanoseconds)
+    //     const segundos = mapeoSegundos.map((segundo) => segundo * 1000)
+    //     const nanosegundos = mapeoNanosegundos.map((nanosegundo) => nanosegundo / 1000)
+    //     const timestampEnMilisegundos = segundos.reduce((acc, val) => acc + val, 0) + nanosegundos.reduce((acc, val) => acc + val, 0);
+    //     const fecha = new Date(timestampEnMilisegundos)
+    //     console.log(fecha);
+    //   }
+    //   fechas();
+
     return (
-        <Grid sx={{display: 'flex', justifyContent: 'center'}}>
+        <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
             <Calendar
                 culture="es"
                 defaultView={lastView}
@@ -74,7 +84,7 @@ const CalendarComponent = () => {
                 messages={espMesages()}
                 onDoubleClickEvent={onDoubleClick}
                 onSelectEvent={onSelect}
-                style={{ marginTop: 20, marginBottom: 30, height: "calc( 100vh - 80px)", width: "95vw"}}
+                style={{ marginTop: 20, marginBottom: 30, height: "calc( 100vh - 80px)", width: "95vw" }}
             />
         </Grid>
     )
