@@ -34,16 +34,6 @@ const useCalendarStore = () => {
     querySnapshot.forEach((doc) => {
       events.push({id: doc.id, ...doc.data()});
     });
-    // const fechas = async() => {
-    //   const  mapeoSegundos = await events.map((arr) => arr.start.seconds)
-    //   const mapeoNanosegundos = await events.map((arr) => arr.start.nanoseconds)
-    //   const segundos = mapeoSegundos.map((segundo) => segundo * 1000)
-    //   const nanosegundos = mapeoNanosegundos.map((nanosegundo) => nanosegundo / 1000)
-    //   const timestampEnMilisegundos = segundos.reduce((acc, val) => acc + val, 0) + nanosegundos.reduce((acc, val) => acc + val, 0);
-    //   const fecha = new Date(timestampEnMilisegundos)
-    //   dispatch(setStart(fecha))
-    // }
-    // fechas();
     dispatch(setEvent(events))
   };
 

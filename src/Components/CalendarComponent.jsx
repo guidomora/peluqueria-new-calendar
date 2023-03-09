@@ -59,17 +59,7 @@ const CalendarComponent = () => {
         startLoadingEvents()
     }, [])
 
-    // const fechas = () => {
-    //     const mapeoSegundos = events.map((arr) => arr.start.seconds)
-    //     const mapeoNanosegundos = events.map((arr) => arr.start.nanoseconds)
-    //     const segundos = mapeoSegundos.map((segundo) => segundo * 1000)
-    //     const nanosegundos = mapeoNanosegundos.map((nanosegundo) => nanosegundo / 1000)
-    //     const timestampEnMilisegundos = segundos.reduce((acc, val) => acc + val, 0) + nanosegundos.reduce((acc, val) => acc + val, 0);
-    //     const fecha = new Date(timestampEnMilisegundos)
-    //     console.log(fecha);
-    //   }
-    //   fechas();
-
+    console.log(events)
     return (
         <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
             <Calendar
