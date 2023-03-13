@@ -16,7 +16,7 @@ import {
   onSnapshot,
   getDocs,
 } from "firebase/firestore";
-import {eventsToDateEvents} from "../helpers/eventsToDateEvents"
+import { eventsToDateEvents } from "../helpers/eventsToDateEvents";
 import { toDate } from "date-fns";
 import { async } from "@firebase/util";
 
@@ -32,9 +32,16 @@ const useCalendarStore = () => {
     const querySnapshot = await getDocs(collection(db, "tobias"));
     const events = [];
     querySnapshot.forEach((doc) => {
-      events.push({id: doc.id, ...doc.data()});
+      events.push({
+        id: doc.id,
+        start: doc.data().start.toDate(),
+        end: doc.data().end.toDate(),
+        title: doc.data().title,
+        notes: doc.data().notes,
+      });
     });
-    dispatch(setEvent(events))
+    //  events.map(event => event.start.toDate())
+    dispatch(setEvent(events));
   };
 
   const startSavingEvent = async (calendarEvent) => {

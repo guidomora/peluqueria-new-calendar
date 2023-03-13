@@ -59,7 +59,6 @@ const CalendarComponent = () => {
         startLoadingEvents()
     }, [])
 
-    console.log(events)
     return (
         <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
             <Calendar
