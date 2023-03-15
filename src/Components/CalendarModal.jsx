@@ -28,14 +28,13 @@ Modal.setAppElement('#root');
 
 
 const CalendarModal = () => {
-
-    const { activeEvent, startSavingEvent } = useCalendarStore()
+    const { activeEvent, startSavingEvent, setActiveEvent } = useCalendarStore()
     const { isDateModalOpen, closeDateModal } = useUiStore()
     const [formValues, setFormValues] = useState({
         start: new Date(),
-        end: addHours(new Date(), 2),
-        title: "guido",
-        notes: "Corte de pelo"
+        end: new Date(),
+        title: "",
+        notes: ""
     })
 
     useEffect(() => {
@@ -43,7 +42,6 @@ const CalendarModal = () => {
             setFormValues({ ...activeEvent })
         }
     }, [activeEvent])
-
 
     const onInputChanged = ({ target }) => {
         setFormValues({ ...formValues, [target.name]: target.value })
@@ -55,7 +53,6 @@ const CalendarModal = () => {
 
     const closeModal = () => {
         closeDateModal()
-        console.log("cerrando");
     }
 
     const onSubmit = async (event) => {
@@ -80,7 +77,6 @@ const CalendarModal = () => {
         closeDateModal();
 
     }
-
     return (
         <Modal isOpen={isDateModalOpen}
             onRequestClose={closeModal}

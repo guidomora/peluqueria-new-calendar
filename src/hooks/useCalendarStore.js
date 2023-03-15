@@ -2,23 +2,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   onAddEvent,
   onDeleteEvent,
-  onLoadEvents,
   onSetActiveEvent,
   onUpdateEvent,
   setEvent,
-  setStart,
 } from "../store/calendar/calendarSlice";
 import { db } from "../firebase/config";
-import {
-  collection,
-  addDoc,
-  query,
-  onSnapshot,
-  getDocs,
-} from "firebase/firestore";
-import { eventsToDateEvents } from "../helpers/eventsToDateEvents";
-import { toDate } from "date-fns";
-import { async } from "@firebase/util";
+import { collection, addDoc, getDocs, setDoc, doc } from "firebase/firestore";
 
 const useCalendarStore = () => {
   const dispatch = useDispatch();
@@ -40,19 +29,26 @@ const useCalendarStore = () => {
         notes: doc.data().notes,
       });
     });
-    //  events.map(event => event.start.toDate())
     dispatch(setEvent(events));
   };
 
   const startSavingEvent = async (calendarEvent) => {
-    if (calendarEvent._id) {
+    if (activeEvent.id) {
       dispatch(onUpdateEvent({ ...calendarEvent }));
+      const docRef = doc(db, `/tobias/${activeEvent.id}`)
+      await (setDoc(docRef, calendarEvent, {merge:true}))
+
+
+      // const updatedEvent = db.collection("tobias").doc(`/tobias/${activeEvent.id}`);
+
+      // // Set the 'capital' field of the city
+      // const res = await updatedEvent.update({});
     } else {
       const docRef = await addDoc(collection(db, "tobias"), {
         ...calendarEvent,
         _id: new Date().getTime(),
       });
-      dispatch(onAddEvent({ ...calendarEvent, _id: new Date().getTime() }));
+      dispatch(onAddEvent({ ...calendarEvent}));
     }
   };
 

@@ -44,9 +44,7 @@ export const calendarSlice = createSlice({
     setEvent: (state, {payload}) => {
       state.events = payload
     },
-    // setStart: (state, {payload}) => {
-    //   state.events.start = {payload}
-    // },
+
     onLoadEvents: (state, { payload = [] }) => {
       state.isLoadingEvents = false;
       payload.forEach((event) => {
