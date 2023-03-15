@@ -7,7 +7,7 @@ import {
   setEvent,
 } from "../store/calendar/calendarSlice";
 import { db } from "../firebase/config";
-import { collection, addDoc, getDocs, setDoc, doc } from "firebase/firestore";
+import { collection, addDoc, getDocs, setDoc, doc, deleteDoc } from "firebase/firestore";
 
 const useCalendarStore = () => {
   const dispatch = useDispatch();
@@ -37,12 +37,6 @@ const useCalendarStore = () => {
       dispatch(onUpdateEvent({ ...calendarEvent }));
       const docRef = doc(db, `/tobias/${activeEvent.id}`)
       await (setDoc(docRef, calendarEvent, {merge:true}))
-
-
-      // const updatedEvent = db.collection("tobias").doc(`/tobias/${activeEvent.id}`);
-
-      // // Set the 'capital' field of the city
-      // const res = await updatedEvent.update({});
     } else {
       const docRef = await addDoc(collection(db, "tobias"), {
         ...calendarEvent,
@@ -52,7 +46,8 @@ const useCalendarStore = () => {
     }
   };
 
-  const deleteEvent = () => {
+  const deleteEvent = async () => {
+    deleteDoc(doc(db, `/tobias/${activeEvent.id}`));
     dispatch(onDeleteEvent());
   };
 

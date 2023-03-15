@@ -24,7 +24,7 @@ const localizer = dateFnsLocalizer({
 
 
 const CalendarComponent = () => {
-    const { events, setActiveEvent, startLoadingEvents } = useCalendarStore()
+    const { events, setActiveEvent, startLoadingEvents, activeEvent } = useCalendarStore()
     const { openDateModal } = useUiStore()
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
 
@@ -57,7 +57,7 @@ const CalendarComponent = () => {
 
     useEffect(() => {
         startLoadingEvents()
-    }, [])
+    }, [activeEvent])
 
     console.log(events);
     return (
