@@ -1,7 +1,7 @@
 import Modal from 'react-modal';
 import React, { useEffect, useState } from 'react'
 import "./calendarModal.css"
-import { addHours, differenceInSeconds } from 'date-fns';
+import { differenceInSeconds } from 'date-fns';
 import ReactDatePicker, { registerLocale } from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
@@ -27,8 +27,8 @@ const customStyles = {
 Modal.setAppElement('#root');
 
 
-const CalendarModal = () => {
-    const { activeEvent, startSavingEvent, setActiveEvent } = useCalendarStore()
+const CalendarModal = ({nombre}) => {
+    const { activeEvent, startSavingEvent } = useCalendarStore(nombre)
     const { isDateModalOpen, closeDateModal } = useUiStore()
     const [formValues, setFormValues] = useState({
         start: new Date(),

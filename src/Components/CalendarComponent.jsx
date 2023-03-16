@@ -1,5 +1,5 @@
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
-import { format, parse, startOfWeek, getDay, toDate } from "date-fns";
+import { format, parse, startOfWeek, getDay } from "date-fns";
 import esES from "date-fns/locale/es";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { espMesages } from '../helpers/espMesages';
@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import "../App.css"
 import useUiStore from '../hooks/useUiStore';
 import useCalendarStore from '../hooks/useCalendarStore';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 
 
 const locales = {
@@ -23,8 +23,8 @@ const localizer = dateFnsLocalizer({
 });
 
 
-const CalendarComponent = () => {
-    const { events, setActiveEvent, startLoadingEvents, activeEvent } = useCalendarStore()
+const CalendarComponent = ({nombre}) => {
+    const { events, setActiveEvent, startLoadingEvents, activeEvent } = useCalendarStore(nombre)
     const { openDateModal } = useUiStore()
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
 
@@ -59,9 +59,11 @@ const CalendarComponent = () => {
         startLoadingEvents()
     }, [activeEvent])
 
-    console.log(events);
     return (
-        <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Grid sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 5, }}>
+            <Grid>
+            <Typography sx={{fontSize: 28}}>{`${nombre}`}</Typography>
+            </Grid>
             <Calendar
                 culture="es"
                 defaultView={lastView}
@@ -74,7 +76,9 @@ const CalendarComponent = () => {
                 messages={espMesages()}
                 onDoubleClickEvent={onDoubleClick}
                 onSelectEvent={onSelect}
-                style={{ marginTop: 20, marginBottom: 30, height: "calc( 100vh - 80px)", width: "95vw" }}
+                min={new Date("December 25, 1995 9:00:00")}
+                max={new Date("December 25, 1995 22:00:00")}
+                style={{ marginTop: 40, marginBottom: 30, height: "calc( 100vh - 80px)", width: "95vw" }}
             />
         </Grid>
     )

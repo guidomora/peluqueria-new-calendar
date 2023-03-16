@@ -4,8 +4,8 @@ import React from 'react'
 import useCalendarStore from '../hooks/useCalendarStore'
 import useUiStore from '../hooks/useUiStore'
 
-const NavBar = () => {
-    const {setActiveEvent, deleteEvent, activeEvent} =useCalendarStore()
+const NavBar = ({nombre}) => {
+    const {setActiveEvent, deleteEvent, activeEvent} =useCalendarStore(nombre)
     const {openDateModal} = useUiStore()
 
     const handleClickNew = () => {

@@ -9,7 +9,7 @@ import {
 import { db } from "../firebase/config";
 import { collection, addDoc, getDocs, setDoc, doc, deleteDoc } from "firebase/firestore";
 
-const useCalendarStore = () => {
+const useCalendarStore = (nombre) => {
   const dispatch = useDispatch();
   const { events, activeEvent } = useSelector((state) => state.calendar);
 
@@ -18,7 +18,7 @@ const useCalendarStore = () => {
   };
 
   const startLoadingEvents = async () => {
-    const querySnapshot = await getDocs(collection(db, "tobias"));
+    const querySnapshot = await getDocs(collection(db, `${nombre}`));
     const events = [];
     querySnapshot.forEach((doc) => {
       events.push({
@@ -35,10 +35,10 @@ const useCalendarStore = () => {
   const startSavingEvent = async (calendarEvent) => {
     if (activeEvent.id) {
       dispatch(onUpdateEvent({ ...calendarEvent }));
-      const docRef = doc(db, `/tobias/${activeEvent.id}`)
+      const docRef = doc(db, `/${nombre}/${activeEvent.id}`)
       await (setDoc(docRef, calendarEvent, {merge:true}))
     } else {
-      const docRef = await addDoc(collection(db, "tobias"), {
+      const docRef = await addDoc(collection(db, `${nombre}`), {
         ...calendarEvent,
         _id: new Date().getTime(),
       });
@@ -47,7 +47,7 @@ const useCalendarStore = () => {
   };
 
   const deleteEvent = async () => {
-    deleteDoc(doc(db, `/tobias/${activeEvent.id}`));
+    deleteDoc(doc(db, `/${nombre}/${activeEvent.id}`));
     dispatch(onDeleteEvent());
   };
 

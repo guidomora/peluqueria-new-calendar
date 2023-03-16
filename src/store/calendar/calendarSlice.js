@@ -1,21 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { addHours } from "date-fns";
-
-const tempEvent = {
-  start: new Date(),
-  end: addHours(new Date(), 3),
-  title: "start of the week",
-  name: "guido",
-  notes: "holaaaa",
-  _id: new Date().getTime(),
-};
 
 export const calendarSlice = createSlice({
   name: "calendar",
   initialState: {
-    events: [tempEvent],
+    events: [],
     activeEvent: null,
-    isLoadingEvents: true
+    isLoadingEvents: true,
   },
   reducers: {
     onSetActiveEvent: (state, { payload }) => {
@@ -41,8 +31,8 @@ export const calendarSlice = createSlice({
         state.activeEvent = null;
       }
     },
-    setEvent: (state, {payload}) => {
-      state.events = payload
+    setEvent: (state, { payload }) => {
+      state.events = payload;
     },
 
     onLoadEvents: (state, { payload = [] }) => {
@@ -58,5 +48,12 @@ export const calendarSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { onSetActiveEvent, onAddEvent, onUpdateEvent, onDeleteEvent, onLoadEvents, setEvent, setStart } =
-  calendarSlice.actions;
+export const {
+  onSetActiveEvent,
+  onAddEvent,
+  onUpdateEvent,
+  onDeleteEvent,
+  onLoadEvents,
+  setEvent,
+  setStart,
+} = calendarSlice.actions;
