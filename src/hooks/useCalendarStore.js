@@ -11,10 +11,12 @@ import { collection, addDoc, getDocs, setDoc, doc, deleteDoc } from "firebase/fi
 
 const useCalendarStore = (nombre) => {
   const dispatch = useDispatch();
-  const { events, activeEvent } = useSelector((state) => state.calendar);
+  const { events, activeEvent } = useSelector((state) => state.calendar.events);
+  const calendars = useSelector(state => state.calendar.events[`${nombre}`]);
 
-  const setActiveEvent = (calendarEvent) => {
-    dispatch(onSetActiveEvent(calendarEvent));
+
+  const setActiveEvent = (activeEvent) => {
+    dispatch(onSetActiveEvent(activeEvent));
   };
 
   const startLoadingEvents = async () => {
@@ -29,22 +31,23 @@ const useCalendarStore = (nombre) => {
         notes: doc.data().notes,
       });
     });
-    dispatch(setEvent(events));
+    dispatch(setEvent({ calendarId: nombre, events }));
   };
 
   const startSavingEvent = async (calendarEvent) => {
-    if (activeEvent.id) {
+    if (calendarEvent.id) {
       dispatch(onUpdateEvent({ ...calendarEvent }));
-      const docRef = doc(db, `/${nombre}/${activeEvent.id}`)
+      const docRef = doc(db, `/${nombre}/${calendarEvent.id}`)
       await (setDoc(docRef, calendarEvent, {merge:true}))
     } else {
       const docRef = await addDoc(collection(db, `${nombre}`), {
         ...calendarEvent,
         _id: new Date().getTime(),
       });
-      dispatch(onAddEvent({ ...calendarEvent}));
+      dispatch(onAddEvent({ calendarId: nombre, events }));
     }
   };
+
 
   const deleteEvent = async () => {
     deleteDoc(doc(db, `/${nombre}/${activeEvent.id}`));

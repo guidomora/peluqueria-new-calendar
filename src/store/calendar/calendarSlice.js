@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 export const calendarSlice = createSlice({
   name: "calendar",
   initialState: {
-    events: [],
+    events: {},
     activeEvent: null,
     isLoadingEvents: true,
   },
@@ -12,35 +12,38 @@ export const calendarSlice = createSlice({
       state.activeEvent = payload;
     },
     onAddEvent: (state, { payload }) => {
-      state.events.push(payload);
+      if (!state.events[payload.calendarId]) {
+        state.events[payload.calendarId] = [];
+      }
+      state.events[payload.calendarId].push(payload.event);
       state.activeEvent = null;
     },
     onUpdateEvent: (state, { payload }) => {
-      state.events = state.events.map((event) => {
-        if (event.id === payload.id) {
-          return payload;
-        }
-        return event;
-      });
+      state.events[payload.calendarId] = state.events[payload.calendarId].map((event) =>
+        event.id === payload.event.id ? payload.event : event
+      );
     },
+
     onDeleteEvent: (state) => {
-      if (state.activeEvent) {
-        state.events = state.events.filter(
-          (event) => event._id !== state.activeEvent._id
-        );
+      if (state.activeEvent?.calendarId) {
+        state.events[state.activeEvent.calendarId] = state.events[state.activeEvent.calendarId]
+          .filter((event) => event._id !== state.activeEvent._id);
         state.activeEvent = null;
       }
     },
     setEvent: (state, { payload }) => {
-      state.events = payload;
+      state.events[payload.calendarId] = payload.events;
     },
 
-    onLoadEvents: (state, { payload = [] }) => {
+    onLoadEvents: (state, { payload }) => {
       state.isLoadingEvents = false;
-      payload.forEach((event) => {
-        const exists = state.events.some((dbEvent) => dbEvent.id === event.id);
+
+      (payload.events || []).forEach((event) => {
+        const exists = state.events[payload.calendarId]?.some(
+          (dbEvent) => dbEvent.id === event.id
+        );
         if (!exists) {
-          state.events.push(event);
+          state.events[payload.calendarId].push(event);
         }
       });
     },

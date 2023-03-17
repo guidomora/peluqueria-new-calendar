@@ -8,6 +8,7 @@ import "../App.css"
 import useUiStore from '../hooks/useUiStore';
 import useCalendarStore from '../hooks/useCalendarStore';
 import { Grid, Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 
 const locales = {
@@ -24,12 +25,15 @@ const localizer = dateFnsLocalizer({
 
 
 const CalendarComponent = ({nombre}) => {
-    const { events, setActiveEvent, startLoadingEvents, activeEvent } = useCalendarStore(nombre)
+    const { setActiveEvent, startLoadingEvents, activeEvent } = useCalendarStore(nombre)
     const { openDateModal } = useUiStore()
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
-
+    const calendars = useSelector(state => state.calendar.events[`${nombre}`]);
     const eventStyleGetter = (event, start, end, isSelected) => {
 
+
+
+    
         const style = {
             backGroundColor: "#9212ea",
             borderRadius: "0px",
@@ -68,7 +72,7 @@ const CalendarComponent = ({nombre}) => {
                 culture="es"
                 defaultView={lastView}
                 localizer={localizer}
-                events={events}
+                events={calendars}
                 onView={onViewChanged}
                 eventPropGetter={eventStyleGetter}
                 startAccessor="start"
