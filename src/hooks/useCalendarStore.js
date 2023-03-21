@@ -2,21 +2,35 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   onAddEvent,
   onDeleteEvent,
+  onLoadEvents,
   onSetActiveEvent,
   onUpdateEvent,
   setEvent,
 } from "../store/calendar/calendarSlice";
 import { db } from "../firebase/config";
-import { collection, addDoc, getDocs, setDoc, doc, deleteDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  setDoc,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
+import { id } from "date-fns/locale";
 
 const useCalendarStore = (nombre) => {
   const dispatch = useDispatch();
-  const { events, activeEvent } = useSelector((state) => state.calendar.events);
-  const calendars = useSelector(state => state.calendar.events[`${nombre}`]);
-
+  const { events, activeEvent } = useSelector((state) => state.calendar);
+  const calendars = useSelector((state) => state.calendar.events[`${nombre}`]);
 
   const setActiveEvent = (activeEvent) => {
-    dispatch(onSetActiveEvent(activeEvent));
+    dispatch(
+      onSetActiveEvent({
+        calendarId: nombre,
+        event: activeEvent,
+      })
+    );
+    console.log(activeEvent);
   };
 
   const startLoadingEvents = async () => {
@@ -34,24 +48,43 @@ const useCalendarStore = (nombre) => {
     dispatch(setEvent({ calendarId: nombre, events }));
   };
 
-  const startSavingEvent = async (calendarEvent) => {
-    if (calendarEvent.id) {
-      dispatch(onUpdateEvent({ ...calendarEvent }));
-      const docRef = doc(db, `/${nombre}/${calendarEvent.id}`)
-      await (setDoc(docRef, calendarEvent, {merge:true}))
+  const startSavingEventKarina = async (calendarEvent, calendarId = nombre) => {
+    if (activeEvent?.event.id) {
+      const docRef = doc(db, `/karina/${calendarEvent.id}`);
+      await setDoc(docRef, calendarEvent, { merge: true });
+      dispatch(onUpdateEvent({ calendarId, ...calendarEvent }));
     } else {
-      const docRef = await addDoc(collection(db, `${nombre}`), {
+      const docRef = await addDoc(collection(db, `karina`), {
         ...calendarEvent,
-        _id: new Date().getTime(),
+        id: new Date().getTime(),
       });
-      dispatch(onAddEvent({ calendarId: nombre, events }));
+      dispatch(onAddEvent({ nombre, calendarEvent }));
+      dispatch(onLoadEvents({ nombre, calendarEvent }));
     }
   };
 
+  const startSavingEventTobias = async (calendarEvent, calendarId = nombre) => {
+    if (activeEvent?.event.id) {
+      const docRef = doc(db, `/tobias/${calendarEvent.id}`);
+      await setDoc(docRef, calendarEvent, { merge: true });
+      dispatch(onUpdateEvent({ calendarId, ...calendarEvent }));
+    } else {
+      const docRef = await addDoc(collection(db, `tobias`), {
+        ...calendarEvent,
+      });
+      dispatch(onAddEvent({ nombre, calendarEvent }));
+    }
+  };
 
   const deleteEvent = async () => {
-    deleteDoc(doc(db, `/${nombre}/${activeEvent.id}`));
-    dispatch(onDeleteEvent());
+    try {
+      if (activeEvent?.event.id) {
+        await deleteDoc(doc(db, `/tobias/${activeEvent.event.id}`));
+        dispatch(onDeleteEvent(activeEvent));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return {
@@ -59,9 +92,10 @@ const useCalendarStore = (nombre) => {
     activeEvent,
 
     setActiveEvent,
-    startSavingEvent,
+    startSavingEventKarina,
     deleteEvent,
     startLoadingEvents,
+    startSavingEventTobias,
   };
 };
 

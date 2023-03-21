@@ -25,15 +25,13 @@ const localizer = dateFnsLocalizer({
 
 
 const CalendarComponent = ({nombre}) => {
-    const { setActiveEvent, startLoadingEvents, activeEvent } = useCalendarStore(nombre)
-    const { openDateModal } = useUiStore()
+    const { setActiveEvent, startLoadingEvents, } = useCalendarStore(nombre)
+    const { openDateModal, setNombre } = useUiStore(nombre)
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
     const calendars = useSelector(state => state.calendar.events[`${nombre}`]);
+    const { events, activeEvent } = useSelector((state) => state.calendar);
     const eventStyleGetter = (event, start, end, isSelected) => {
 
-
-
-    
         const style = {
             backGroundColor: "#9212ea",
             borderRadius: "0px",
@@ -57,12 +55,14 @@ const CalendarComponent = ({nombre}) => {
 
     const onSelect = (event) => {
         setActiveEvent(event)
+        setNombre(nombre)
     }
 
     useEffect(() => {
         startLoadingEvents()
     }, [activeEvent])
 
+    //console.log(activeEvent);
     return (
         <Grid sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 5, }}>
             <Grid>

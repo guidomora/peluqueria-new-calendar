@@ -8,6 +8,7 @@ import es from 'date-fns/locale/es';
 import Swal from 'sweetalert2';
 import useUiStore from '../hooks/useUiStore';
 import useCalendarStore from '../hooks/useCalendarStore';
+import { useSelector } from 'react-redux';
 
 
 registerLocale('es', es)
@@ -27,14 +28,16 @@ const customStyles = {
 Modal.setAppElement('#root');
 
 
-const CalendarModal = ({nombre}) => {
-    const { activeEvent, startSavingEvent } = useCalendarStore(nombre)
-    const { isDateModalOpen, closeDateModal } = useUiStore()
+const CalendarModal = ({ nombre }) => {
+    const { activeEvent, startSavingEventKarina, startSavingEventTobias } = useCalendarStore(nombre)
+    const { isDateModalOpen, closeDateModal } = useUiStore(nombre)
+    const calendars = useSelector(state => state.calendar.events[`${nombre}`]);
+    const { nombree } = useSelector(state => state.ui)
     const [formValues, setFormValues] = useState({
         start: new Date(),
         end: new Date(),
         title: "",
-        notes: ""
+        notes: "",
     })
 
     useEffect(() => {
@@ -73,9 +76,8 @@ const CalendarModal = ({nombre}) => {
         }
 
 
-        await startSavingEvent(formValues)
+        if (nombree == "tobias") { await startSavingEventTobias(formValues) } else if (nombree == "karina") { await startSavingEventKarina(formValues) }
         closeDateModal();
-
     }
     return (
         <Modal isOpen={isDateModalOpen}
