@@ -15,6 +15,7 @@ import {
   setDoc,
   doc,
   deleteDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { id } from "date-fns/locale";
 
@@ -30,7 +31,6 @@ const useCalendarStore = (nombre) => {
         event: activeEvent,
       })
     );
-    console.log(activeEvent);
   };
 
   const startLoadingEvents = async () => {
@@ -51,7 +51,7 @@ const useCalendarStore = (nombre) => {
   const startSavingEventKarina = async (calendarEvent, calendarId = nombre) => {
     if (activeEvent?.event.id) {
       const docRef = doc(db, `/karina/${calendarEvent.id}`);
-      await setDoc(docRef, calendarEvent, { merge: true });
+      await updateDoc(docRef, calendarEvent, { merge: true });
       dispatch(onUpdateEvent({ calendarId, ...calendarEvent }));
     } else {
       const docRef = await addDoc(collection(db, `karina`), {
@@ -65,11 +65,62 @@ const useCalendarStore = (nombre) => {
 
   const startSavingEventTobias = async (calendarEvent, calendarId = nombre) => {
     if (activeEvent?.event.id) {
-      const docRef = doc(db, `/tobias/${calendarEvent.id}`);
-      await setDoc(docRef, calendarEvent, { merge: true });
-      dispatch(onUpdateEvent({ calendarId, ...calendarEvent }));
+      const docRef = doc(db, `/tobias/${activeEvent.event.id}`);
+      await updateDoc(docRef, calendarEvent, { merge: true });
+      dispatch(onUpdateEvent({ calendarId, calendarEvent }));
     } else {
       const docRef = await addDoc(collection(db, `tobias`), {
+        ...calendarEvent,
+      });
+      dispatch(onAddEvent({ nombre, calendarEvent }));
+    }
+  };
+
+  const startSavingEventMichael = async (calendarEvent, calendarId = nombre) => {
+    if (activeEvent?.event.id) {
+      const docRef = doc(db, `/michael/${activeEvent.event.id}`);
+      await updateDoc(docRef, calendarEvent, { merge: true });
+      dispatch(onUpdateEvent({ calendarId, calendarEvent }));
+    } else {
+      const docRef = await addDoc(collection(db, `michael`), {
+        ...calendarEvent,
+      });
+      dispatch(onAddEvent({ nombre, calendarEvent }));
+    }
+  };
+
+  const startSavingEventPaloma = async (calendarEvent, calendarId = nombre) => {
+    if (activeEvent?.event.id) {
+      const docRef = doc(db, `/paloma/${activeEvent.event.id}`);
+      await updateDoc(docRef, calendarEvent, { merge: true });
+      dispatch(onUpdateEvent({ calendarId, calendarEvent }));
+    } else {
+      const docRef = await addDoc(collection(db, `paloma`), {
+        ...calendarEvent,
+      });
+      dispatch(onAddEvent({ nombre, calendarEvent }));
+    }
+  };
+  const startSavingEventVanesa = async (calendarEvent, calendarId = nombre) => {
+    if (activeEvent?.event.id) {
+      const docRef = doc(db, `/vanesa/${activeEvent.event.id}`);
+      await updateDoc(docRef, calendarEvent, { merge: true });
+      dispatch(onUpdateEvent({ calendarId, calendarEvent }));
+    } else {
+      const docRef = await addDoc(collection(db, `vanesa`), {
+        ...calendarEvent,
+      });
+      dispatch(onAddEvent({ nombre, calendarEvent }));
+    }
+  };
+
+  const startSavingEventNora = async (calendarEvent, calendarId = nombre) => {
+    if (activeEvent?.event.id) {
+      const docRef = doc(db, `/nora/${activeEvent.event.id}`);
+      await updateDoc(docRef, calendarEvent, { merge: true });
+      dispatch(onUpdateEvent({ calendarId, calendarEvent }));
+    } else {
+      const docRef = await addDoc(collection(db, `nora`), {
         ...calendarEvent,
       });
       dispatch(onAddEvent({ nombre, calendarEvent }));
@@ -79,7 +130,7 @@ const useCalendarStore = (nombre) => {
   const deleteEvent = async () => {
     try {
       if (activeEvent?.event.id) {
-        await deleteDoc(doc(db, `/tobias/${activeEvent.event.id}`));
+        await deleteDoc(doc(db, `/${nombre}/${activeEvent.event.id}`));
         dispatch(onDeleteEvent(activeEvent));
       }
     } catch (error) {
@@ -96,6 +147,10 @@ const useCalendarStore = (nombre) => {
     deleteEvent,
     startLoadingEvents,
     startSavingEventTobias,
+    startSavingEventMichael,
+    startSavingEventPaloma,
+    startSavingEventVanesa,
+    startSavingEventNora,
   };
 };
 

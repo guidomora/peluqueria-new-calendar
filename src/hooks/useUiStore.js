@@ -13,16 +13,11 @@ const useUiStore = (nombre) => {
     dispatch(onCloseDateModal());
   };
 
-  const setNombre = (nombree) => {
-    dispatch(onSetNombre(nombree))
-  }
-
   return {
     isDateModalOpen,
 
     openDateModal,
     closeDateModal,
-    setNombre
   };
 };
 

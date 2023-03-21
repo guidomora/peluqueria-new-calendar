@@ -13,9 +13,6 @@ export const uiSlice = createSlice({
     onCloseDateModal: (state) => {
         state.isDateModalOpen = false;
       },
-    onSetNombre: (state, {payload}) => {
-      state.nombree = payload
-    },
   },
 });
 

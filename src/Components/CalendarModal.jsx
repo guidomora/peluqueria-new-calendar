@@ -29,10 +29,9 @@ Modal.setAppElement('#root');
 
 
 const CalendarModal = ({ nombre }) => {
-    const { activeEvent, startSavingEventKarina, startSavingEventTobias } = useCalendarStore(nombre)
+    const { activeEvent, startSavingEventVanesa, startSavingEventNora, startSavingEventKarina, startSavingEventTobias, startSavingEventMichael, startSavingEventPaloma } = useCalendarStore(nombre)
     const { isDateModalOpen, closeDateModal } = useUiStore(nombre)
     const calendars = useSelector(state => state.calendar.events[`${nombre}`]);
-    const { nombree } = useSelector(state => state.ui)
     const [formValues, setFormValues] = useState({
         start: new Date(),
         end: new Date(),
@@ -42,7 +41,7 @@ const CalendarModal = ({ nombre }) => {
 
     useEffect(() => {
         if (activeEvent !== null) {
-            setFormValues({ ...activeEvent })
+            setFormValues({ ...activeEvent.event })
         }
     }, [activeEvent])
 
@@ -76,7 +75,12 @@ const CalendarModal = ({ nombre }) => {
         }
 
 
-        if (nombree == "tobias") { await startSavingEventTobias(formValues) } else if (nombree == "karina") { await startSavingEventKarina(formValues) }
+        if (activeEvent.calendarId == "tobias") { await startSavingEventTobias(formValues) } 
+        else if (activeEvent.calendarId == "karina") { await startSavingEventKarina(formValues) } 
+        else if (activeEvent.calendarId == "michael") { await startSavingEventMichael(formValues) }
+        else if (activeEvent.calendarId == "paloma") { await startSavingEventPaloma(formValues) }
+        else if (activeEvent.calendarId == "vanesa") { await startSavingEventVanesa(formValues) }
+        else if (activeEvent.calendarId == "nora") { await startSavingEventNora(formValues) }
         closeDateModal();
     }
     return (

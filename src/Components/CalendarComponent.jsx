@@ -9,6 +9,7 @@ import useUiStore from '../hooks/useUiStore';
 import useCalendarStore from '../hooks/useCalendarStore';
 import { Grid, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
+import CalendarEventBox from './CalendarEventBox';
 
 
 const locales = {
@@ -23,10 +24,9 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
-
 const CalendarComponent = ({nombre}) => {
     const { setActiveEvent, startLoadingEvents, } = useCalendarStore(nombre)
-    const { openDateModal, setNombre } = useUiStore(nombre)
+    const { openDateModal } = useUiStore(nombre)
     const [lastView, setLastView] = useState(localStorage.getItem("lastView") || "week")
     const calendars = useSelector(state => state.calendar.events[`${nombre}`]);
     const { events, activeEvent } = useSelector((state) => state.calendar);
@@ -55,14 +55,12 @@ const CalendarComponent = ({nombre}) => {
 
     const onSelect = (event) => {
         setActiveEvent(event)
-        setNombre(nombre)
     }
 
     useEffect(() => {
         startLoadingEvents()
     }, [activeEvent])
 
-    //console.log(activeEvent);
     return (
         <Grid sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginTop: 5, }}>
             <Grid>
@@ -75,6 +73,9 @@ const CalendarComponent = ({nombre}) => {
                 events={calendars}
                 onView={onViewChanged}
                 eventPropGetter={eventStyleGetter}
+                components = {{
+                    event: CalendarEventBox
+                }}
                 startAccessor="start"
                 endAccessor="end"
                 messages={espMesages()}
